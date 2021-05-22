@@ -1,22 +1,18 @@
-import 'dart:io';
-
 import 'package:shelf/shelf.dart';
-import 'package:shelf/shelf_io.dart';
+import 'package:shelf/shelf_io.dart' as shelf_io;
 
-Future main() async {
-  // Find port to listen on from environment variable.
-  var port = int.tryParse(Platform.environment['PORT'] ?? '8080');
+void main() async {
+  var handler =
+      const Pipeline().addMiddleware(logRequests()).addHandler(_echoRequest);
 
-  // Read $TARGET from environment variable.
-  var target = Platform.environment['TARGET'] ?? 'World';
+  var server = await shelf_io.serve(handler, 'localhost', 8080);
 
-  Response handler(Request request) => Response.ok('Hello $target');
+  // Enable content compression
+  server.autoCompress = true;
 
-  // Serve handler on given port.
-  var server = await serve(
-    Pipeline().addMiddleware(logRequests()).addHandler(handler),
-    InternetAddress.anyIPv4,
-    port,
-  );
   print('Serving at http://${server.address.host}:${server.port}');
+}
+
+Response _echoRequest(Request request) {
+  return Response.ok('Request for "${request.url}"');
 }
