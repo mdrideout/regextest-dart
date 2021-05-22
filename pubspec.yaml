@@ -1,0 +1,9 @@
+name: regextest_dart
+publish_to: none # let's not accidentally publish this to pub.dartlang.org
+description: Regular expression performance testing in DART
+
+environment:
+  sdk: ">=2.1.0 <3.0.0"
+
+dependencies:
+  shelf: ^1.1.4
